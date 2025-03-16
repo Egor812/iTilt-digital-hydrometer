@@ -33,17 +33,6 @@
 // + сглаживание показаний измерений
 
 
-
-// Main fork updates:
-// ESP32-C3 board
-// save data to flash when wi-fi not present
-// own server
-// SPIFFS -> LittleFS
-// Arduino IDE -> PlatformIO
-// remove MQTT services. No time to modify.
-// No ESP8266 support. No time to support
-
-
 //c3 feautures
 // it's better don't use gpio9. It's can make startup in the boot mode. See Strapping Pins
 
@@ -59,23 +48,14 @@
 #endif
 
 
-
 #include <ESP32Time.h>
 //waiting for update https://github.com/espressif/arduino-esp32/issues/9912
 #include <LittleFS.h>             //https://github.com/littlefs-project/littlefs/blob/master/README.md
 #include <ArduinoJson.h>          //https://github.com/bblanchon/ArduinoJson
 
 
-
 //flag for saving data (Custom params for WiFiManager
 //bool shouldSaveConfig = false;
-
-
-//MQTT global declerations
-//https://github.com/knolleary/pubsubclient
-//#include <PubSubClient.h>
-//const char broker[] = "mqtt.mydevices.com";
-//int        port     = 1883;
 
 
 //DS18B20
