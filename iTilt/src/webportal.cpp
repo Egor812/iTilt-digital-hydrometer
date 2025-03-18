@@ -125,6 +125,11 @@ void bindServerCallback()
 
 }
 
+size_t getHtmlStyle( char* buffer, size_t bufferSize )
+{
+  strncpy( buffer, styleTemplate, bufferSize);
+  return strlen(styleTemplate);
+}
 
 size_t getHtmlMenu( char* buffer, size_t bufferSize )
 {
@@ -153,7 +158,9 @@ void handleRoute(void)
 
   Serial.println("[HTTP] handle Route");
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(MAIN_PAGE_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
+
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<BODY><h1>%s</h1>"), LT(MAIN_PAGE_H1));
   offset += getHtmlMenu( html+offset, bufferSize-offset);
   offset += snprintf_P( html+offset, bufferSize-offset, PSTR("</body></html>") );
@@ -251,7 +258,8 @@ void handleDeviceConfResults()
   }  
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(SETTINGS_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<body><h1>%s</h1>"), LT(SETTINGS_UPDATED));
   if( error ) offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<p style='color:red'>%s</p>"), LT(SETTINGS_ERROR));
   offset += snprintf_P(html + offset, bufferSize - offset, 
@@ -329,7 +337,8 @@ void handlePinConfResults()
   }  
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(PIN_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<body><h1>%s</h1>"), LT(PIN_UPDATED));
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<ul>") );
   for( uint8_t c=0;c<7;c++)  {
@@ -362,7 +371,8 @@ void handleDeviceConfInput()
   //Serial.println(ESP.getFreeHeap());
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(SETTINGS_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<body><h1>%s</h1>"), LT(SETTINGS_H1));
   offset += snprintf_P(html + offset, bufferSize - offset, 
   PSTR("<p><form action='/updatedeviceconfresults?' method ='POST'>\
@@ -428,7 +438,8 @@ void handlePinConfInput()
   }  
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(PIN_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<body><h1>%s</h1>"), LT(PIN_H1));
   offset += snprintf_P(html + offset, bufferSize - offset, 
   PSTR("<p>%s</p>\
@@ -498,7 +509,8 @@ void handleOffsetCalibration()
   Serial.println(coffset);
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(OFFSET_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<body><h1>%s</h1>"), LT(OFFSET_H1));
   offset += snprintf_P(html + offset, bufferSize - offset, 
   PSTR("<p>%s: %.4f</p>\
@@ -538,7 +550,8 @@ void handlePolynomialCalibrationResults()
   int recordnumber=0;
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(POLYNOM_RESULTS_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<body><h1>%s</h1>"), LT(POLYNOM_RESULTS_H1));
   offset += snprintf_P(html + offset, bufferSize - offset, PSTR("<table border='1'><align='right'><tr><td>%s</td><td>%s</td></tr>"), LT(TILT_VAL), LT(GRAVITY_VAL));
 
@@ -611,7 +624,8 @@ void handlePolynomialCalibrationInput()
   } 
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(CALIBRATION_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
   offset += snprintf_P(html + offset, bufferSize - offset,
     PSTR("<BODY><h1>%s</h1>\
       <p>%s</p>\
@@ -686,7 +700,8 @@ void handlePolynomialCalibrationStart()
   } 
 
   offset += snprintf_P(html + offset, bufferSize - offset, headTemplate, LT(CALIBRATION_TITLE)); 
-  offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(html + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( html + offset, bufferSize - offset );
    offset += snprintf_P(html + offset, bufferSize - offset,
     PSTR("<BODY><h1>%s</h1>\
     <p>%s</p>\
@@ -726,7 +741,8 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
         button { font-size: 16px; padding: 10px; margin: 10px; }\
       </style>\
       <title>%s</title></head>"), LT(READINGS_TITLE));
-  offset += snprintf_P(buffer + offset, bufferSize - offset, styleTemplate);
+  //offset += snprintf_P(buffer + offset, bufferSize - offset, styleTemplate);
+  offset += getHtmlStyle( buffer + offset, bufferSize - offset );
   offset += snprintf_P(buffer + offset, bufferSize - offset,
     PSTR("<BODY><h1>%s</h1>\
     <p>%s</p>\
@@ -738,8 +754,9 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
     <p>%s: %.2f &deg;C</p>\
     <p>%s: %.2f &deg;C</p>\
     <p>%s: %.2f %%</p>\
-    <h2>Real-Time Graph</h2>\
-    <button id=\"toggle-plot\">Включить</button>\
+    <br>\
+    <h2>%s</h2>\
+    <button id=\"toggle-plot\">%s</button>\
     <div id=\"graph\"></div>\
     <div id=\"h_graph\"></div>\
     <script>\
@@ -747,7 +764,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
       let data = [ [], [], [] ]; /*[time, values, ema, ]*/\
       let h_data = [ [], [] ];/*[values, freq]*/\
       let opts = {\
-          title: \"Real-Time Data\",\
+          title: \"%s\",\
           width: 800,\
           height: 300,\
           scales: {\
@@ -761,7 +778,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
           ],\
       };\
       let h_opts = {\
-          title: \"Histogram\",\
+          title: \"%s\",\
           width: 800,\
           height: 300,\
           scales: {\
@@ -863,7 +880,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
       /*window.onload = fetchData;*/ /* Запуск при загрузке страницы */\
     </script>"),
    LT(READINGS_H1), LT(READINGS_UPDATE), LT(BAT_VOLTAGE), batvolt, LT(BAT_PERCENT), batp, LT(TILT), tilt, ema, LT(TILT_INFO), LT(ROLL), roll, LT(ROLL_INFO), 
-   LT(GRAVITY), grav, LT(TEMPERATURE_MPU), gyro_temp, LT(TEMPERATURE_DS), temp, LT(ABV), abv);
+   LT(GRAVITY), grav, LT(TEMPERATURE_MPU), gyro_temp, LT(TEMPERATURE_DS), temp, LT(ABV), abv, LT(REALTIMEGRAPH), LT(STARTSTOP), LT(REALTIMEDATA), LT(HISTOGRAM));
   offset += snprintf_P( buffer+offset, bufferSize-offset, PSTR("<br><br><a class='back' href='/'>%s</a></body></html>"), LT(BACK) );
   Serial.print("[HTTP] Lenght:");
   Serial.println(offset); 
@@ -917,6 +934,7 @@ void checkLanguage(void)
 
 void runConfigurationPortal () 
 {
+  //WiFi.mode(WIFI_AP); //??
   #ifdef LED_BUILTIN
       pinMode(LED_BUILTIN,OUTPUT);  //It seems like WiFimanager or WiFi frequently overwright this statement
     
@@ -948,7 +966,7 @@ void runConfigurationPortal ()
     //String menue="<p>"+htmlMenueText+"</p>";
     //WiFiManagerParameter custom_menue(menue.c_str());
     
-    //wm.setDebugOutput(true, WM_DEBUG_MAX );
+    wm.setDebugOutput(true, WM_DEBUG_DEV  );
   
     //wm.resetSettings();
     //Setting Callbacks
@@ -958,6 +976,7 @@ void runConfigurationPortal ()
     wm.setConfigPortalBlocking(false);
     wm.setWebServerCallback(bindServerCallback);  
   
+    // /wifi
     WiFiManagerParameter back_button("<br><br><a style='border: 0;\
     border-radius: .3rem;\
     background-color: #1fa3ec;\
@@ -973,7 +992,12 @@ void runConfigurationPortal ()
     ////wm.addParameter(&custom_menue);
     //wm.setConfigPortalTimeout(atoi(portalTimeOut));
     //wm.setCustomHeadElement(htmlWiFiConfStyleText.c_str());
-    ////wm.setCustomHeadElement(htmlStyleText.c_str());
+    
+    // Говорят, что setCustomHeadElement использует класс String для работы со строкой - копирование в RAM обязательно. И надо делать так:
+    //char styleTemplateCopy[1024];
+    //strncpy_P(styleTemplateCopy, styleTemplate, sizeof(styleTemplateCopy));
+    //Но и так работает
+    wm.setCustomHeadElement(styleTemplate);
 
     String APName="iTilt_";
     Serial.println("WiFi Mac adress is: "+WiFi.macAddress());
@@ -1002,27 +1026,42 @@ void runConfigurationPortal ()
 
  void doWiFiManager()
  {
+    float bat;
+    uint16_t batchecker=0;
+    
     while(true){
-        if( portalRunning ) {
-            wm.process(); // do processing
-        } else {
-            break;
-        }
+      if( portalRunning ) {
+          wm.process(); // do processing
+      } else {
+          break;
+      }
 
-        //tilt
-        if( dataSubscribesCount > 0 ){
-            dataSubscribesCount--;
-            if( dataSubscribesCount == 0 ) {
-                //Serial.println("****"); // Для отладки
-                finishMPUReadings();
-                powerDownSensors();
-            }
-            //get tilt
-            if(acc_status==2){
-                readTilt();
-            }
-            //if( dataSubscribesCount % 10 == 0 ) Serial.println(dataSubscribesCount);
+      //tilt
+      if( dataSubscribesCount > 0 ){
+          dataSubscribesCount--;
+          if( dataSubscribesCount == 0 ) {
+              //Serial.println("****"); // Для отладки
+              finishMPUReadings();
+              powerDownSensors();
+          }
+          //get tilt
+          if(acc_status==2){
+              readTilt();
+          }
+          //if( dataSubscribesCount % 10 == 0 ) Serial.println(dataSubscribesCount);
+      }
+
+      //check battery
+      batchecker++;
+      if( batchecker == 10000){
+        batchecker = 0;
+        bat=calcBatThresholdAnalyze(0.33, 10, 100);
+        if( bat>1.0 && bat<2.5){
+          Serial.println("Error! Battery voltage is less than 2.5 volt. Recharge the battery or fix the battery conversion factor. Shut down.");
+          delay(1000); // for serial output
+          infiniteSleep();
         }
+      } 
     }
 }
 

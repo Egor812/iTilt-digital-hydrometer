@@ -101,8 +101,11 @@ enum StringIndex {
 	CALIBRATION_SD_900,
 	CALIBRATION_SD_1100,
 	CALIBRATION_SD_1300,
-	LANGUAGE
-
+	LANGUAGE,
+	REALTIMEGRAPH,
+	REALTIMEDATA,
+	HISTOGRAM,
+	STARTSTOP
 };
 
 
@@ -166,7 +169,11 @@ const char* const english[] PROGMEM =
 	"Before any measurement, remove 900 ml of mix in jar and replace it with 900 ml clean water. Your sugar content in the jar of 2.5L is 131 g. The Theoretical Gravity is 1.020 SG",
 	"Before any measurement, remove 1100 ml of mix in jar and replace it with 1100 ml clean water. Your sugar content in the jar of 2.5L is 73 g. The Theoretical Gravity is 1.011 SG",
 	"Before any measurement, remove 1300 ml of mix in jar and replace it with 1300 ml clean water. Your sugar content in the jar of 2.5L is 35 g. The Theoretical Gravity is 1.005 SG",
-	"Language"
+	"Language",
+	"Real-Time Graph",
+	"Real-Time Data",
+	"Histogram",
+	"Start/Stop"
 	};
 
 const char* const russian[] PROGMEM = 
@@ -177,7 +184,7 @@ const char* const russian[] PROGMEM =
 	"iTilt Настройки устройства", "Настройки устройства", "COG сервер", "Логин", "Пароль", "Параметры полинома плотности", "Коэффициент Tilt^3", "Коэффициент Tilt^2", "Коэффициент Tilt^1",
 	"Свободный член", "Остальные параметры", "Коэффициент вольтметра", "Интервал отправки данных (с)", "Интервал сохранения данных в автономном режиме (с)", "Начальная плотность", 
 	"Смещение гироскопа", "iTilt ID", "Таймаут портала настройки",
-	"iTilt Чтение данных", "Чтение данных", "Tilt обновляется раз в 2 секунды.","Заряд аккумулятора (В)", "Заряд аккумулятора (%)", 
+	"iTilt Чтение данных", "Чтение данных", "Значение Tilt обновляется раз в 2 секунды.","Заряд аккумулятора (В)", "Заряд аккумулятора (%)", 
 	"Tilt(Наклон)", "Если устройство лежит на горизонтальной поверхности, значение должно быть около 89°. Если нет, то требуется настройка смещения гироскопа.",
 	"Roll(Крен)", "Если устройство плавает в жидкости, значение должно быть около 90°",
 	"Удельный вес", "Точная температура по DS18B20", "Температура по MPU6050 (точность 1°C)", 
@@ -229,7 +236,11 @@ const char* const russian[] PROGMEM =
 	"Перед измерением удалите 900мл раствора и долейте 900мл чистой воды. Вы получите 131г сахара в 2.5л раствора. Удельный вес 1.020 SG", //91
 	"Перед измерением удалите 1100мл раствора и долейте 1100мл чистой воды. Вы получите 73г сахара в 2.5л раствора. Удельный вес 1.011 SG", //92
 	"Перед измерением удалите 1300мл раствора и долейте 1300мл чистой воды. Вы получите 35г сахара в 2.5л раствора. Удельный вес 1.005 SG", //93 - CALIBRATION_SD_1300
-	"Язык"
+	"Язык",
+	"Графики", 
+	"Поток данных"
+	"Гистограмма",
+	"Пуск/Стоп"
 	};
 
 // Массив языковых пакетов
@@ -242,13 +253,14 @@ const char* styleTemplate =
 	PSTR("<style>\
 		body { background-color: #cccccc; font-family: Arial, Helvetica, Sans-Serif; color: #000088; font-size:16px; padding:10px; }\
 		h1 {text-align:center; font-size:24px;}\
-		table {width:100%%; border-collapse:collapse; font-size:14px;}\
+		table {width:100%; border-collapse:collapse; font-size:14px;}\
 		th,td {padding:8px; text-align:left;}\
-		input {width:100%%; height:40px; font-size: 14px; box-sizing: border-box;}\
-		.save {width:100%%; height:50px; background-color:blue; color:white; border:none; border-radius:10px; font-size:18px; cursor:pointer;}\
+		input {width:100%; height:40px; font-size: 14px; box-sizing: border-box; vertical-align: middle;}\
+		button {margin:4px 2px;}\
+		.save {width:100%; height:50px; background-color:blue; color:white; border:none; border-radius:10px; font-size:18px;}\
 		.back {display:block; text-align:center; margin-top:20px; font-size:16px; color:#000088; text-decoration:none;}\
 		.button {background-color:blue; border:none; color:white; padding:15px; text-align:center;\
-    		text-decoration:none; display:inline-block; font-size:16px; margin:4px 2px; cursor:pointer; width:100%%;\
+    		text-decoration:none; display:inline-block; font-size:16px; margin:4px 2px; width:100%;\
     		border-radius:10px; box-sizing:border-box;}\
 	</style>");
 
