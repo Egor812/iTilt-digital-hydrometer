@@ -156,19 +156,19 @@ const char* const english[] PROGMEM =
 	"POLYNOMIAL (MODEL) CALIBRATION WIZARD: SAMPLED DATA",
 	"This wizard should assist you in calibrating the iTilt. If you are here, you may already have a calibration data sample set (ordered pairs of Tilt(Measured in <a href='/readings?'>SENSOR READINGS</a>)\
   	and Gravity (Measured with a Hydrometer). If not, you can do it now. Make sure your publication interval is set to 0, and portal time out is 9999. ",
-	"We suggest you use a 3L measuring jar, boil 0.55kg sugar in 1.5L clean water. Let the mix cool down to about 20 degrees Celsius. Add your mix to the jar. \
+	"We suggest you use a 3L measuring jar, boil 0.48kg sugar in 1.5L clean water. Let the mix cool down to about 20 degrees Celsius. Add your mix to the jar. \
   	Full the jar with extra water until it reaches 2.5L. Stir the content properly (before each measurement). Measure your Tilt, Measure you Gravity (If you have a hydro meter). If not, use the theoretical values.",
   	"The instructions in the table is a guide only, you may ignore them",
 	"ALL RECORDS MUST BE COMLETED. The polynomial will be WRONG otherwise",
 	"IMPORTANT: Make sure your iTilt is free floating. It must not touch the bottom or two sides of the jar.",
 	"WIZARD INSTRUCTIONS AND THEORETICAL GRAVITY",
-	"Your sugar content in the jar of 2.5L is 500g. The Theoretical Gravity is 1.084 SG",
-	"Before any measurement, remove 600 ml of mix in jar and replace it with 600 ml clean water. Your sugar content in the jar of 2.5L is 410 g. The Theoretical Gravity is 1.064 SG",
-	"Before any measurement, remove 700 ml of mix in jar and replace it with 700 ml clean water. Your sugar content in the jar of 2.5L is 301 g. The Theoretical Gravity is 1.046 SG",
-	"Before any measurement, remove 800 ml of mix in jar and replace it with 800 ml clean water. Your sugar content in the jar of 2.5L is 205 g. The Theoretical Gravity is 1.032 SG",
-	"Before any measurement, remove 900 ml of mix in jar and replace it with 900 ml clean water. Your sugar content in the jar of 2.5L is 131 g. The Theoretical Gravity is 1.020 SG",
-	"Before any measurement, remove 1100 ml of mix in jar and replace it with 1100 ml clean water. Your sugar content in the jar of 2.5L is 73 g. The Theoretical Gravity is 1.011 SG",
-	"Before any measurement, remove 1300 ml of mix in jar and replace it with 1300 ml clean water. Your sugar content in the jar of 2.5L is 35 g. The Theoretical Gravity is 1.005 SG",
+	"Your sugar content in the jar of 2.5L is 480g. The Theoretical Gravity is 1.077 SG",
+	"Before any measurement, remove 600 ml of mix in jar and replace it with 600 ml clean water. Your sugar content in the jar of 2.5L is 365 g. The Theoretical Gravity is 1.056 SG",
+	"Before any measurement, remove 900 ml of mix in jar and replace it with 900 ml clean water. Your sugar content in the jar of 2.5L is 233 g. The Theoretical Gravity is 1.036 SG",
+	"Before any measurement, remove 900 ml of mix in jar and replace it with 900 ml clean water. Your sugar content in the jar of 2.5L is 149 g. The Theoretical Gravity is 1.023 SG",
+	"Before any measurement, remove 1000 ml of mix in jar and replace it with 1000 ml clean water. Your sugar content in the jar of 2.5L is 90 g. The Theoretical Gravity is 1.014 SG",
+	"Before any measurement, remove 900 ml of mix in jar and replace it with 900 ml clean water. Your sugar content in the jar of 2.5L is 57 g. The Theoretical Gravity is 1.009 SG",
+	"Before any measurement, remove 1100 ml of mix in jar and replace it with 1100 ml clean water. Your sugar content in the jar of 2.5L is 32 g. The Theoretical Gravity is 1.005 SG",
 	"Language",
 	"Real-Time Graph",
 	"Real-Time Data",
@@ -223,19 +223,19 @@ const char* const russian[] PROGMEM =
 	"Помощник полиномиальной калибровки: набор данных", //80
 	"Откалибруем ваш iTilt. Здесь нужно ввести значения полученные на странице <a href='/readings?'>Данные датчиков</a>)\
   	и удельный вес SG измеренный гидрометром.", //81
-	"Возьмите 3-литровую банку. Добавьте 550г сахара в 1.5л чистой воды. Подогрейте для быстрого растворения. Остудите до 20С. Перелейте в банку. \
+	"Возьмите 3-литровую банку. Добавьте 480г сахара в 1.5л чистой воды. Подогрейте для быстрого растворения. Остудите до 20С. Перелейте в банку. \
   	Долейте в банку воды до объема 2.5л. Тщательно перемешайте. Мешать нужно при каждом добавлении воды. Измерьте наклон iTilt и удельный вес(SG) гидрометром. Если гидрометра нет - используйте рассчетные значения.", //82
   	"Инструкции в таблице опциональны, вы пожете использовать свои пропорции", //83
 	"Сделайте все измерения. Иначе полином будет неправильным", //84
 	"ВАЖНО: убедитесь, что iTilt плавает свободно. Он не должен касаться дна или двух стенок банки.", //85
 	"Указания и рассчетные значения SG", //86
-	"500г сахара в 2.5л раствора. Удельный вес 1.084 SG", //87
-	"Перед измерением удалите 600мл раствора и долейте 600мл чистой воды. Вы получите 410г сахара в 2.5л раствора. Удельный вес 1.064 SG", //88
-	"Перед измерением удалите 700мл раствора и долейте 700мл чистой воды. Вы получите 301г сахара в 2.5л раствора. Удельный вес 1.046 SG", //89
-	"Перед измерением удалите 800мл раствора и долейте 800мл чистой воды. Вы получите 205г сахара в 2.5л раствора. Удельный вес 1.032 SG", //90
-	"Перед измерением удалите 900мл раствора и долейте 900мл чистой воды. Вы получите 131г сахара в 2.5л раствора. Удельный вес 1.020 SG", //91
-	"Перед измерением удалите 1100мл раствора и долейте 1100мл чистой воды. Вы получите 73г сахара в 2.5л раствора. Удельный вес 1.011 SG", //92
-	"Перед измерением удалите 1300мл раствора и долейте 1300мл чистой воды. Вы получите 35г сахара в 2.5л раствора. Удельный вес 1.005 SG", //93 - CALIBRATION_SD_1300
+	"480г сахара в 2.5л раствора. Удельный вес 1.077 SG", //87
+	"Перед измерением удалите 600мл раствора и долейте 600мл чистой воды. Вы получите 365г сахара в 2.5л раствора. Удельный вес 1.056 SG", //88
+	"Перед измерением удалите 900мл раствора и долейте 900мл чистой воды. Вы получите 233г сахара в 2.5л раствора. Удельный вес 1.036 SG", //89
+	"Перед измерением удалите 900мл раствора и долейте 900мл чистой воды. Вы получите 149г сахара в 2.5л раствора. Удельный вес 1.023 SG", //90
+	"Перед измерением удалите 1000мл раствора и долейте 1000мл чистой воды. Вы получите 90г сахара в 2.5л раствора. Удельный вес 1.014 SG", //91
+	"Перед измерением удалите 900мл раствора и долейте 900мл чистой воды. Вы получите 57г сахара в 2.5л раствора. Удельный вес 1.009 SG", //92
+	"Перед измерением удалите 1100мл раствора и долейте 1100мл чистой воды. Вы получите 32г сахара в 2.5л раствора. Удельный вес 1.005 SG", //93 - CALIBRATION_SD_1300
 	"Язык",
 	"Графики", 
 	"Поток данных"

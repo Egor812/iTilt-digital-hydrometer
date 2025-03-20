@@ -15,6 +15,7 @@
 
 
 //TODO
+// - Portal - нажать save не вводя пароля - что будет?
 // - !ресет таймера в режиме сохранения данных. Сохранение данных до ресета (на сервере)
 // - portaltimeout
 // - 21700 и ЛоРа
@@ -841,7 +842,7 @@ void setup()
       // Чудесный выход из портала без перезагрузки. Как?
       powerUpSensors();
       initMPU(5);
-      tilt=calcTilt(50);
+      tilt=calcTilt(100);
       temp=calcTemp();
       //tempgyro=calcGyroTemp();
       batvolt=calcBatThresholdAnalyze(0.33, 10, 100);
