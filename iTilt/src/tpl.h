@@ -105,7 +105,8 @@ enum StringIndex {
 	REALTIMEGRAPH,
 	REALTIMEDATA,
 	HISTOGRAM,
-	STARTSTOP
+	START,
+	STOP
 };
 
 
@@ -173,7 +174,8 @@ const char* const english[] PROGMEM =
 	"Real-Time Graph",
 	"Real-Time Data",
 	"Histogram",
-	"Start/Stop"
+	"Start",
+	"Stop"
 	};
 
 const char* const russian[] PROGMEM = 
@@ -238,9 +240,10 @@ const char* const russian[] PROGMEM =
 	"Перед измерением удалите 1100мл раствора и долейте 1100мл чистой воды. Вы получите 32г сахара в 2.5л раствора. Удельный вес 1.005 SG", //93 - CALIBRATION_SD_1300
 	"Язык",
 	"Графики", 
-	"Поток данных"
+	"Поток данных",
 	"Гистограмма",
-	"Пуск/Стоп"
+	"Пуск",
+	"Стоп"
 	};
 
 // Массив языковых пакетов

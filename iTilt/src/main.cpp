@@ -19,6 +19,8 @@
 // - !ресет таймера в режиме сохранения данных. Сохранение данных до ресета (на сервере)
 // - portaltimeout
 // - 21700 и ЛоРа
+// - сделать калибровку на лету. То есть добавляем в полином точку. Смотрим соседние. Удаляем их или нет. Вводим новые коэффициенты
+// - запрос сервером коэффициентов
 // ? mpu ultra low  power - https://stackoverflow.com/questions/54450757/how-use-the-mpu-6050-in-ultra-low-power-mode
 // - [WebServer.cpp:638] _handleRequest(): request handler not found 
 // - переход на ООП

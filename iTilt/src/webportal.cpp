@@ -756,7 +756,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
     <p>%s: %.2f %%</p>\
     <br>\
     <h2>%s</h2>\
-    <button id=\"toggle-plot\">%s</button>\
+    <button id=\"toggle-plot\">%s/%s</button>\
     <div id=\"graph\"></div>\
     <div id=\"h_graph\"></div>\
     <script>\
@@ -879,10 +879,22 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
       });\
       /*window.onload = fetchData;*/ /* Запуск при загрузке страницы */\
     </script>"),
-   LT(READINGS_H1), LT(READINGS_UPDATE), LT(BAT_VOLTAGE), batvolt, LT(BAT_PERCENT), batp, LT(TILT), tilt, ema, LT(TILT_INFO), LT(ROLL), roll, LT(ROLL_INFO), 
-   LT(GRAVITY), grav, LT(TEMPERATURE_MPU), gyro_temp, LT(TEMPERATURE_DS), temp, LT(ABV), abv, LT(REALTIMEGRAPH), LT(STARTSTOP), LT(REALTIMEDATA), LT(HISTOGRAM));
+   LT(READINGS_H1), 
+   LT(READINGS_UPDATE), 
+   LT(BAT_VOLTAGE), batvolt, 
+   LT(BAT_PERCENT), batp, 
+   LT(TILT), tilt, ema, LT(TILT_INFO), 
+   LT(ROLL), roll, LT(ROLL_INFO), 
+   LT(GRAVITY), grav, 
+   LT(TEMPERATURE_MPU), gyro_temp, 
+   LT(TEMPERATURE_DS), temp, 
+   LT(ABV), abv, 
+   LT(REALTIMEGRAPH), 
+   LT(START), LT(STOP), 
+   LT(REALTIMEDATA), 
+   LT(HISTOGRAM));
   offset += snprintf_P( buffer+offset, bufferSize-offset, PSTR("<br><br><a class='back' href='/'>%s</a></body></html>"), LT(BACK) );
-  Serial.print("[HTTP] Lenght:");
+  Serial.print("[HTTP] Lenght:"); //6851b
   Serial.println(offset); 
 }
 

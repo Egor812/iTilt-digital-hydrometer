@@ -53,6 +53,9 @@ Tilt - мгновенные данные датчика наклона
 EMA - Экспоненциальное скользящее среднее. Можно использовать для калибровки.
 
 
+## КАЛИБРОВКА
+[todo исправить на новые значения]
+
 
 <input type="text" inputmode="decimal" name="coefficientx3" pattern="^[-+]?[0-9]*[.,]?[0-9]*" size="18" value="0.000000999999997">   Pattern attribute value ^[-+]?[0-9]*[.,]?[0-9]* is not a valid regular expression: Uncaught SyntaxError: Invalid regular expression: /^[-+]?[0-9]*[.,]?[0-9]*/v: Invalid character in character class
 
