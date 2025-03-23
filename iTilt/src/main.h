@@ -36,6 +36,7 @@
 
 extern float tilt;
 extern float tilt_ema;
+extern float temperature;
 extern uint8_t acc_status; // 0 - power off; 1 - not init;  2-ready
 
 struct Settings{

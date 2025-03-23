@@ -84,13 +84,13 @@ void bindServerCallback()
   wm.server->on("/info",handleNotFound);
   wm.server->on("/update",handleNotFound);
   wm.server->on("/erase",handleNotFound);
-  wm.server->on("/favicon.ico", handleFavicon); // Регистрируем обработчик*/
+  wm.server->on("/favicon.ico", handleFavicon);
   // Обработчик для данных
   wm.server->on("/data", []() {
      if(acc_status==2){
         dataSubscribesCount = 2000; // обновляем подписку
         static unsigned long startTime = millis();
-        String json = "{\"t\":" + String((millis() - startTime) / 1000.0, 1) + ",\"v\":" + String(tilt) + ",\"f\":" + String(tilt_ema) + "}";
+        String json = "{\"t\":" + String((millis() - startTime) / 1000.0, 1) + ",\"v\":" + String(tilt) + ",\"f\":" + String(tilt_ema) + ",\"c\":" + String(temperature) + "}";
         wm.server->send(200, "application/json", json);
      }
      else{
@@ -748,11 +748,11 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
     <p>%s</p>\
     <p>%s: %.2f</p>\
     <p>%s: %.0f</p>\
-    <p>%s: <b><span id='tilt-val'>%.2f</span>&deg;</b> (EMA <span id='tilt-ema'>%.2f</span>)</p><p style='font-size:12px;'>%s</p>\
+    <p>%s: <b><span id='tilt-val'>%.2f</span>&deg;</b> (EMA <span id='tilt-ema' style='color:red;'>%.2f</span>)</p><p style='font-size:12px;'>%s</p>\
     <p>%s: %.2f &deg;</p><p style='font-size:12px;'>%s</p>\
     <p>%s: %.5f SG</p>\
     <p>%s: %.2f &deg;C</p>\
-    <p>%s: %.2f &deg;C</p>\
+    <p>%s: <span id='temperature-val'>%.2f</span> &deg;C</p>\
     <p>%s: %.2f %%</p>\
     <br>\
     <h2>%s</h2>\
@@ -761,6 +761,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
     <div id=\"h_graph\"></div>\
     <script>\
       let ltime=0;\
+      let temp=0;\
       let data = [ [], [], [] ]; /*[time, values, ema, ]*/\
       let h_data = [ [], [] ];/*[values, freq]*/\
       let opts = {\
@@ -796,11 +797,13 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
       let isPlotting = false;\
       let tiltValueElement = document.getElementById(\"tilt-val\");\
       let tiltEMAElement = document.getElementById(\"tilt-ema\");\
+      let tempValueElement = document.getElementById(\"temperature-val\");\
       \
       function updateTiltValue() {\
         if( isPlotting ){\
           tiltValueElement.textContent = data[1].at(-1);\
           tiltEMAElement.textContent =  data[2].at(-1);\
+          tempValueElement.textContent = temp;\
         }\
         else{\
           fetch(\"/data\")\
@@ -808,6 +811,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
             .then(json => {\
                 tiltValueElement.textContent = json.v.toFixed(2);\
                 tiltEMAElement.textContent = json.f.toFixed(2);\
+                tempValueElement.textContent = json.c;\
           });\
         }\
       }\
@@ -848,6 +852,7 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
             .then(json => {\
               if (json.t > ltime){\
                 ltime = json.t;\
+                temp = json.c;\
                 data[0].push(json.t); /*Время*/\
                 data[1].push(json.v); /*tilt*/\
                 data[2].push(json.f); /*tilt filtered*/\
@@ -861,6 +866,19 @@ void getReadingsHtml(char* buffer, size_t bufferSize, float batvolt, float batp,
                   data[2].shift();\
                 }\
         \
+                let allEqual = true;\
+                for (let i = 1; i < data[2].length; i++) {\
+                  if (data[2][i] !== data[2][0]) {\
+                    allEqual = false;\
+                    break;\
+                  }\
+                }\
+                if( allEqual ) { document.getElementById('tilt-ema').style.color = 'darkgreen'; }\
+                else {\
+                  let average = data[2].reduce((sum, value) => sum + value, 0) / data[2].length;\
+                  if( average == data[2].at(-1) ) { document.getElementById('tilt-ema').style.color = 'orange'; }\
+                  else { document.getElementById('tilt-ema').style.color = 'red'; }\
+                }\
                 uplot.setData(data); /* Обновляем график*/\
                 h_uplot.setData(h_data);\
               }\
@@ -902,11 +920,11 @@ void handleReadings()
 {
   Serial.println("[HTTP] handle Readings");
 
-  powerUpSensors();
-  initMPU(5);
+  if(acc_status==0) powerUpSensors();
+  if(acc_status==1) initMPU(5);
   float batvolt=calcBatThresholdAnalyze(0.33, 10, 100);
   float roll= calcRoll(40);
-  tilt= calcTilt(200); // чем ниже тем лучше. идет накопление ВЧ фильтра
+  tilt= calcTilt(200); // чем ниже строка тем лучше. идет накопление ВЧ фильтра
   float grav=calcGrav(tilt);
   float abv=calcABV(grav, settings.originalgravity);
   float t = calcTemp();
@@ -1058,7 +1076,10 @@ void runConfigurationPortal ()
           }
           //get tilt
           if(acc_status==2){
-              readTilt();
+            readTilt();
+            if ((dataSubscribesCount & 0x7F) == 0) {  // Проверка, кратно ли 128 (0x7F = 127) 64 ~200мс
+              temperature = calcTemp();  // Вызов функции calcTemp()
+            }
           }
           //if( dataSubscribesCount % 10 == 0 ) Serial.println(dataSubscribesCount);
       }

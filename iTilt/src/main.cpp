@@ -74,6 +74,7 @@ MPU6050 accelgyro(hardware.i2c_address);
 int16_t ax, ay, az;
 float tilt;
 float tilt_ema;
+float temperature;
 uint8_t acc_status; // 0 - power off; 1 - not init;  2-ready
 Settings settings;
 Hardware hardware;
@@ -765,7 +766,7 @@ void setup()
   float roll;
   float grav;
   float abv;
-  float temp;
+  //float temp;
   float tempgyro; 
   float batvolt;
   float batcap;
@@ -814,7 +815,7 @@ void setup()
     }
     tilt = calcTilt(100);
     finishMPUReadings();
-    temp = calcTemp();
+    temperature = calcTemp();
     //tempgyro=calcGyroTemp();  
     powerDownSensors();
 
@@ -845,7 +846,7 @@ void setup()
       powerUpSensors();
       initMPU(5);
       tilt=calcTilt(100);
-      temp=calcTemp();
+      temperature=calcTemp();
       //tempgyro=calcGyroTemp();
       batvolt=calcBatThresholdAnalyze(0.33, 10, 100);
       //batcap=calcBatCap(batvolt); 
@@ -897,12 +898,12 @@ void setup()
       //ditiltnum = atoi(itiltnum);
       
       if( has_queue == false ) {
-        if( !pubReadingToCOG(settings.itiltnum, settings.cloud_username, settings.cloud_password, batvolt, grav, temp, signalstrength, now ) ) {
+        if( !pubReadingToCOG(settings.itiltnum, settings.cloud_username, settings.cloud_password, batvolt, grav, temperature, signalstrength, now ) ) {
           sending_failed=true;
         }
       }
       else {
-        storeData(  batvolt,  grav, temp,  signalstrength, now );
+        storeData(  batvolt,  grav, temperature,  signalstrength, now );
         data_saved = true;
         if( !pubFileToCOG(settings.itiltnum, settings.cloud_username, settings.cloud_password) )  {
           sending_failed=true;
@@ -925,7 +926,7 @@ void setup()
         interval = settings.pubint;
         connection_missing_count = 0;
       }
-      if(!data_saved) storeData(  batvolt,  grav, temp,  signalstrength, now );
+      if(!data_saved) storeData(  batvolt,  grav, temperature,  signalstrength, now );
     }
     else{
       interval = settings.pubint;
