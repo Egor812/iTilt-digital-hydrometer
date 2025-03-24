@@ -186,6 +186,10 @@ void handleFavicon() {
     wm.server->send(204, "image/x-icon", "");
 }
 
+bool float_not_equal(float a, float b, float epsilon = 0.0001) {
+  return fabs(a - b) > epsilon;
+}
+
 void handleDeviceConfResults()
 {
   bool error = false;
@@ -221,6 +225,15 @@ void handleDeviceConfResults()
   if( strlen(json["itiltnum"].as<const char*>())==0 ) error=true;
   if( strlen(json["portalTimeOut"].as<const char*>())==0 ) error=true;
   if( strlen(json["language"].as<const char*>())==0 ) error=true;
+
+  if( float_not_equal(settings.coefficientx1, json["coefficientx1"].as<float>(), 0.000000000001) ||
+      float_not_equal(settings.coefficientx2, json["coefficientx2"].as<float>(), 0.000000000001) ||
+      float_not_equal(settings.coefficientx3, json["coefficientx3"].as<float>(), 0.000000000001) ||
+      float_not_equal(settings.constantterm, json["constantterm"].as<float>(), 0.000000000001) ||
+      settings.itiltnum != json["itiltnum"].as<uint16_t>() ) {
+        settings.new_calibration=1;
+        json["new_calibration"] = settings.new_calibration;
+      }
 
   File configFile = LittleFS.open("/config.json", "w");
   if (!configFile) {
@@ -939,8 +952,8 @@ void handleReadings()
   u_int16_t bufferSize = 8192;
   char* html = (char*)malloc(bufferSize); // Выделяем память в куче
   if (html == NULL) {
-      Serial.println("Memory allocation failed!");
-      return;
+    Serial.println("Memory allocation failed!");
+    return;
   } 
 
   getReadingsHtml(html, bufferSize, batvolt, calcBatCap(batvolt), tilt, roll, grav, t, t2, abv, tilt_ema );
@@ -958,7 +971,7 @@ void handleReadings()
 
 void checkLanguage(void)
 {
-    if( settings.language >= NUM_LANGUAGES ) settings.language=0;
+  if( settings.language >= NUM_LANGUAGES ) settings.language=0;
 }
 
 
@@ -993,109 +1006,110 @@ void runConfigurationPortal ()
   timerStop(timer);
   timerAlarmEnable(timer);*/
             
-    //String menue="<p>"+htmlMenueText+"</p>";
-    //WiFiManagerParameter custom_menue(menue.c_str());
-    
-    wm.setDebugOutput(true, WM_DEBUG_DEV  );
+  //String menue="<p>"+htmlMenueText+"</p>";
+  //WiFiManagerParameter custom_menue(menue.c_str());
   
-    //wm.resetSettings();
-    //Setting Callbacks
-    //wm.setSaveConfigCallback(saveConfigCallback);
+  wm.setDebugOutput(true, WM_DEBUG_DEV  );
 
+  //wm.resetSettings();
+  //Setting Callbacks
+  //wm.setSaveConfigCallback(saveConfigCallback);
 
-    wm.setConfigPortalBlocking(false);
-    wm.setWebServerCallback(bindServerCallback);  
+  wm.setConfigPortalBlocking(false);
+  wm.setWebServerCallback(bindServerCallback);  
+
+  // /wifi
+  WiFiManagerParameter back_button("<br><br><a style='border: 0;\
+  border-radius: .3rem;\
+  background-color: #1fa3ec;\
+  color: #fff;\
+  line-height: 2.4rem;\
+  font-size: 1.2rem;\
+  width: 100%;\
+  display: block;\
+  text-align: center;' class='back' href='/'><b>&#706;<b></a>");
+  wm.addParameter(&back_button);   //wm.setCustomBodyFooter(&back_button); ждем нового релиза с этой функцией.
+  //add all your parameters here
+  //wm.addParameter(&custom_portalTimeOut);
+  ////wm.addParameter(&custom_menue);
+  //wm.setConfigPortalTimeout(atoi(portalTimeOut));
+  //wm.setCustomHeadElement(htmlWiFiConfStyleText.c_str());
   
-    // /wifi
-    WiFiManagerParameter back_button("<br><br><a style='border: 0;\
-    border-radius: .3rem;\
-    background-color: #1fa3ec;\
-    color: #fff;\
-    line-height: 2.4rem;\
-    font-size: 1.2rem;\
-    width: 100%;\
-    display: block;\
-    text-align: center;' class='back' href='/'><b>&#706;<b></a>");
-    wm.addParameter(&back_button);   //wm.setCustomBodyFooter(&back_button); ждем нового релиза с этой функцией.
-    //add all your parameters here
-    //wm.addParameter(&custom_portalTimeOut);
-    ////wm.addParameter(&custom_menue);
-    //wm.setConfigPortalTimeout(atoi(portalTimeOut));
-    //wm.setCustomHeadElement(htmlWiFiConfStyleText.c_str());
-    
-    // Говорят, что setCustomHeadElement использует класс String для работы со строкой - копирование в RAM обязательно. И надо делать так:
-    //char styleTemplateCopy[1024];
-    //strncpy_P(styleTemplateCopy, styleTemplate, sizeof(styleTemplateCopy));
-    //Но и так работает
-    wm.setCustomHeadElement(styleTemplate);
+  // Говорят, что setCustomHeadElement использует класс String для работы со строкой - копирование в RAM обязательно. И надо делать так:
+  //char styleTemplateCopy[1024];
+  //strncpy_P(styleTemplateCopy, styleTemplate, sizeof(styleTemplateCopy));
+  //Но и так работает
+  wm.setCustomHeadElement(styleTemplate);
 
-    String APName="iTilt_";
-    Serial.println("WiFi Mac adress is: "+WiFi.macAddress());
-    APName+=String(settings.itiltnum);
-    Serial.println("Default password: 12345678");
-    /*if (!wm.startConfigPortal(APName.c_str(), "12345678"))
-    {
-      Serial.println("WiFi Manager Portal: User failed to connect to the portal or dit not save. Time Out");
-      ESP.restart();
-      #ifndef ARDUINO_ESP32C3_DEV
-        digitalWrite(LED_BUILTIN,HIGH);
-      #endif      
-      delay(5000);
-    }*/
-    wm.startConfigPortal(APName.c_str(), "12345678");
-    portalRunning = true;
-    doWiFiManager();
-    wm.stopConfigPortal();
-    Serial.println("Portal stopped");
-    delay(1000);
+  String APName="iTilt_";
+  Serial.println("WiFi Mac adress is: "+WiFi.macAddress());
+  APName+=String(settings.itiltnum);
+  Serial.println("Default password: 12345678");
+  /*if (!wm.startConfigPortal(APName.c_str(), "12345678"))
+  {
+    Serial.println("WiFi Manager Portal: User failed to connect to the portal or dit not save. Time Out");
     ESP.restart();
     #ifndef ARDUINO_ESP32C3_DEV
       digitalWrite(LED_BUILTIN,HIGH);
     #endif      
- }
+    delay(5000);
+  }*/
+  wm.startConfigPortal(APName.c_str(), "12345678");
+  portalRunning = true;
+  doWiFiManager();
+  wm.stopConfigPortal();
+  Serial.println("Portal stopped");
+  delay(1000);
+  ESP.restart();
+  #ifndef ARDUINO_ESP32C3_DEV
+    digitalWrite(LED_BUILTIN,HIGH);
+  #endif      
+}
 
- void doWiFiManager()
- {
-    float bat;
-    uint16_t batchecker=0;
-    
-    while(true){
-      if( portalRunning ) {
-          wm.process(); // do processing
-      } else {
-          break;
-      }
-
-      //tilt
-      if( dataSubscribesCount > 0 ){
-          dataSubscribesCount--;
-          if( dataSubscribesCount == 0 ) {
-              //Serial.println("****"); // Для отладки
-              finishMPUReadings();
-              powerDownSensors();
-          }
-          //get tilt
-          if(acc_status==2){
-            readTilt();
-            if ((dataSubscribesCount & 0x7F) == 0) {  // Проверка, кратно ли 128 (0x7F = 127) 64 ~200мс
-              temperature = calcTemp();  // Вызов функции calcTemp()
-            }
-          }
-          //if( dataSubscribesCount % 10 == 0 ) Serial.println(dataSubscribesCount);
-      }
-
-      //check battery
-      batchecker++;
-      if( batchecker == 10000){
-        batchecker = 0;
-        bat=calcBatThresholdAnalyze(0.33, 10, 100);
-        if( bat>1.0 && bat<2.5){
-          Serial.println("Error! Battery voltage is less than 2.5 volt. Recharge the battery or fix the battery conversion factor. Shut down.");
-          delay(1000); // for serial output
-          infiniteSleep();
-        }
-      } 
+void doWiFiManager()
+{
+  float bat;
+  uint16_t batchecker=0;
+  
+  while(true){
+    if( portalRunning ) {
+        wm.process(); // do processing
+    } else {
+        break;
     }
+
+    //tilt
+    if( dataSubscribesCount > 0 ){
+        dataSubscribesCount--;
+        if( dataSubscribesCount == 0 ) {
+            //Serial.println("****"); // Для отладки
+            finishMPUReadings();
+            powerDownSensors();
+        }
+        //get tilt
+        if(acc_status==2){
+          readTilt();
+          if ((dataSubscribesCount & 0x7F) == 0) {  // Проверка, кратно ли 128 (0x7F = 127) 64 ~200мс
+            temperature = calcTemp();  // Вызов функции calcTemp()
+            //Serial.println(tilt,5);
+            //Serial.println(tilt_ema,5);
+          }
+        }
+        //if( dataSubscribesCount % 10 == 0 ) Serial.println(dataSubscribesCount);
+    }
+
+    //check battery
+    batchecker++;
+    if( batchecker == 10000){
+      batchecker = 0;
+      bat=calcBatThresholdAnalyze(0.33, 10, 100);
+      if( bat>1.0 && bat<2.5){
+        Serial.println("Error! Battery voltage is less than 2.5 volt. Recharge the battery or fix the battery conversion factor. Shut down.");
+        delay(1000); // for serial output
+        infiniteSleep();
+      }
+    } 
+  }
 }
 
 void handleExit(void)

@@ -664,6 +664,7 @@ void readConfiguration()
           if (!json["tiltOffset"].isNull() && strlen(json["tiltOffset"].as<const char*>()) > 0) settings.tiltOffset = json["tiltOffset"].as<float>();
           if (!json["itiltnum"].isNull() && strlen(json["itiltnum"].as<const char*>()) > 0) settings.itiltnum = json["itiltnum"].as<uint16_t>();
           if (!json["language"].isNull() && strlen(json["language"].as<const char*>()) > 0) settings.language = json["language"].as<uint8_t>();
+          if (!json["new_calibration"].isNull() && strlen(json["new_calibration"].as<const char*>()) > 0) settings.new_calibration = json["new_calibration"].as<bool>();
           
           if( settings.pubint==0 ) settings.pubint=10;
           if( settings.offlinepubint < settings.pubint ) settings.offlinepubint=settings.pubint;
@@ -721,6 +722,53 @@ void readConfiguration()
     LittleFS.format();  //May be needed to format ESP32 with MicroPython or iSpindel Firmware
   }  
 }
+
+void saveConfiguration(void)
+{
+  // Открываем файл для записи (перезаписываем, если существует)
+  File configFile = LittleFS.open("/config.json", "w");
+  if (!configFile) {
+      Serial.println("failed to open config file for writing");
+      return;
+  }
+
+  // Создаём JSON-документ
+  DynamicJsonDocument doc(1024); // Размер можно увеличить, если структура большая
+
+  // Заполняем JSON значениями из структуры
+  doc["itiltnum"] = settings.itiltnum;
+  doc["coefficientx3"] = settings.coefficientx3;
+  doc["coefficientx2"] = settings.coefficientx2;
+  doc["coefficientx1"] = settings.coefficientx1;
+  doc["constantterm"] = settings.constantterm;
+  doc["tiltOffset"] = settings.tiltOffset;
+  doc["batconvfact"] = settings.batconvfact;
+  doc["originalgravity"] = settings.originalgravity;
+  doc["pubint"] = settings.pubint;
+  doc["offlinepubint"] = settings.offlinepubint;
+  doc["portalTimeOut"] = settings.portalTimeOut;
+  doc["cloud_host"] = settings.cloud_host;
+  doc["cloud_username"] = settings.cloud_username;
+  doc["cloud_password"] = settings.cloud_password;
+  doc["language"] = settings.language;
+  doc["new_calibration"] = settings.new_calibration;
+
+  // Сериализуем JSON в файл
+  if (serializeJson(doc, configFile) == 0) {
+      Serial.println("Ошибка записи в файл!");
+  } else {
+      Serial.println("Настройки сохранены в /config.json");
+  }
+
+  configFile.close();
+}  
+
+void saveCalibrationUpdated(void)
+{
+  settings.new_calibration = 0;
+  saveConfiguration();
+}
+
 
 uint32_t getFreeSpace() // Функция для проверки свободного места
 {
@@ -884,7 +932,7 @@ void setup()
 
     signalstrength=getRSSI();
     //abv=calcABV(grav, settings.originalgravity); // на сервере посчитаем
-    grav=calcGrav(tilt);
+    //grav=calcGrav(tilt);
 
     //if( dofflineint < settings.pubint ) dofflineint = settings.pubint;
 
@@ -896,14 +944,13 @@ void setup()
     else has_queue=false;
     if ( connectToWiFi() ){
       //ditiltnum = atoi(itiltnum);
-      
       if( has_queue == false ) {
-        if( !pubReadingToCOG(settings.itiltnum, settings.cloud_username, settings.cloud_password, batvolt, grav, temperature, signalstrength, now ) ) {
+        if( !pubReadingToCOG(settings.itiltnum, settings.cloud_username, settings.cloud_password, batvolt, tilt, temperature, signalstrength, now ) ) {
           sending_failed=true;
         }
       }
       else {
-        storeData(  batvolt,  grav, temperature,  signalstrength, now );
+        storeData(  batvolt,  tilt, temperature,  signalstrength, now );
         data_saved = true;
         if( !pubFileToCOG(settings.itiltnum, settings.cloud_username, settings.cloud_password) )  {
           sending_failed=true;
@@ -926,7 +973,7 @@ void setup()
         interval = settings.pubint;
         connection_missing_count = 0;
       }
-      if(!data_saved) storeData(  batvolt,  grav, temperature,  signalstrength, now );
+      if(!data_saved) storeData(  batvolt,  tilt, temperature,  signalstrength, now );
     }
     else{
       interval = settings.pubint;

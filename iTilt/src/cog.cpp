@@ -52,7 +52,14 @@ bool connectCOG( WiFiClient& client, uint16_t tilt_id, const char cloud_username
   }
   Serial.println("done");
 
-  String authData = String(tilt_id) + "," + String(cloud_username) + "," + String(cloud_password) + "\n";
+  String authData;
+  if( settings.new_calibration ){
+    authData = String(tilt_id) + "," + String(cloud_username) + "," + String(cloud_password) + 
+    String(settings.coefficientx1) + "," + String(settings.coefficientx2) + "," + String(settings.coefficientx3) + "," + String(settings.constantterm) + "\n";
+  }
+  else{
+    authData = String(tilt_id) + "," + String(cloud_username) + "," + String(cloud_password) + "\n";
+  }
   uint8_t authDataSize = authData.length();
   uint8_t payloadSize = authDataSize + (qty * sizeof(SensorData));
 
@@ -83,6 +90,9 @@ bool getResponseCodeCOG( WiFiClient& client )
 
   if (statusCode == 201) {
     Serial.println("Request was successful!");
+    if( settings.new_calibration == 1) {
+      saveCalibrationUpdated();
+    }
     return true;
   } else {
     Serial.println("Request failed!");
@@ -152,24 +162,16 @@ bool pubFileToCOG( uint16_t tilt_id, const char cloud_username[], const char clo
 }
 
 // COG is non MQTT
-bool pubReadingToCOG( uint16_t tilt_id, const char cloud_username[], const char cloud_password[], float batvolt,  float grav, float temp,  float signal_strength, uint32_t seconds )
+bool pubReadingToCOG( uint16_t tilt_id, const char cloud_username[], const char cloud_password[], float batvolt, float tilt, float temp,  float signal_strength, uint32_t seconds )
 {
 
   WiFiClient client;
   
   if( !connectCOG( client, tilt_id, cloud_username, cloud_password, 1) ) return false;
 
-/*struct SensorData {
-  uint32_t seconds; // as is
-  int16_t temp; // -320.00 .. +320.00 (*100)
-  uint16_t batvolt; // 0..4.20 (*100)
-  uint16_t gravity; // 0 .. 2.0000 (*10k)
-  uint8_t signal_strength; // 0..100
-};*/
-
-  DEBUG_PRINTLN( "We've got:"+String(temp)+", "+String(batvolt)+", "+String(grav)+", "+String(signal_strength)+", "+String(seconds));
-  SensorData data = prepareSensorDataForUpload( batvolt, grav, temp, signal_strength, seconds );
-  DEBUG_PRINTLN( "We're sending:"+String(data.temp)+", "+String(data.batvolt)+", "+String(data.gravity)+", "+String(data.signal_strength)+", "+String(data.seconds));
+  DEBUG_PRINTLN( "We've got:"+String(temp)+", "+String(batvolt)+", "+String(tilt)+", "+String(signal_strength)+", "+String(seconds));
+  SensorData data = prepareSensorDataForUpload( batvolt, temp, signal_strength, seconds, tilt );
+  DEBUG_PRINTLN( "We're sending:"+String(data.temp)+", "+String(data.batvolt)+", "+String(data.tilt)+", "+String(data.signal_strength)+", "+String(data.seconds));
 
   client.write((uint8_t*)&data, 1 * sizeof(SensorData));
 
@@ -180,23 +182,24 @@ bool pubReadingToCOG( uint16_t tilt_id, const char cloud_username[], const char 
   return true;
 }
 
-SensorData prepareSensorDataForUpload( float batvolt,  float grav, float temp,  float signal_strength, uint32_t seconds )
+SensorData prepareSensorDataForUpload( float batvolt, float temp,  float signal_strength, uint32_t seconds, float tilt )
 {
   SensorData data;
   data.temp = temp*100;
-  data.gravity = grav*10000;
+  //data.gravity = grav*10000;
   data.batvolt = batvolt*100;
   data.signal_strength = signal_strength;
   data.seconds = seconds;
+  data.tilt = tilt;
   return data;  
 }
 
-bool storeData( float batvolt,  float grav, float temp,  float signal_strength, uint32_t seconds )
+bool storeData( float batvolt,  float tilt, float temp,  float signal_strength, uint32_t seconds )
 {
 
   //на С3 выделено 1441792 байт. При структуре 11байт этого хватит на год записей раз в 4 минуты.
 
-  SensorData data = prepareSensorDataForUpload( batvolt, grav, temp, signal_strength, seconds );
+  SensorData data = prepareSensorDataForUpload( batvolt, temp, signal_strength, seconds, tilt );
 
   // Подключаем файловую систему
   /*if (!LittleFS.begin()) {

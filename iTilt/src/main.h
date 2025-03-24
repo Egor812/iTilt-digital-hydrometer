@@ -44,7 +44,7 @@ struct Settings{
   float coefficientx3 = 0.0000010000000; //model to convert tilt to gravity
   float coefficientx2 = -0.000131373000;
   float coefficientx1 = 0.0069679520000;
-  float constantterm = 0.8923835598800;
+  float constantterm  = 0.8923835598800;
   float tiltOffset = 0;
   float batconvfact=0.685; //  k=R2/(R1+R2) = 10k / (10k+4.7k) = 0.68
   float originalgravity = 1.05;
@@ -55,6 +55,7 @@ struct Settings{
   char cloud_username[37];
   char cloud_password[41];
   uint8_t language = 1;
+  bool new_calibration = 0; // 1 - когда задан новый id устройства или новые коэффициенты калибровки. После отправки на сервер сбрасывается в 0.
 };
 extern Settings settings;
 
@@ -86,6 +87,7 @@ uint32_t getFreeSpace();
 
 
 void readConfiguration();
+void saveCalibrationUpdated(void);
 
 //Sensors and conversations
 float calcOffset();
