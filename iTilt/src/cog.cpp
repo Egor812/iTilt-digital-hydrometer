@@ -54,12 +54,13 @@ bool connectCOG( WiFiClient& client, uint16_t tilt_id, const char cloud_username
 
   String authData;
   if( settings.new_calibration ){
-    authData = String(tilt_id) + "," + String(cloud_username) + "," + String(cloud_password) + 
-    String(settings.coefficientx1) + "," + String(settings.coefficientx2) + "," + String(settings.coefficientx3) + "," + String(settings.constantterm) + "\n";
+    authData = String(tilt_id) + "," + String(cloud_username) + "," + String(cloud_password) + "," + String(settings.coefficientx1,15) + "," + 
+    String(settings.coefficientx2,15) + "," + String(settings.coefficientx3,15) + "," + String(settings.constantterm,15) + "\n";
   }
   else{
     authData = String(tilt_id) + "," + String(cloud_username) + "," + String(cloud_password) + "\n";
   }
+  Serial.println(authData);
   uint8_t authDataSize = authData.length();
   uint8_t payloadSize = authDataSize + (qty * sizeof(SensorData));
 

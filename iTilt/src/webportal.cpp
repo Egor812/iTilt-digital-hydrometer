@@ -226,14 +226,14 @@ void handleDeviceConfResults()
   if( strlen(json["portalTimeOut"].as<const char*>())==0 ) error=true;
   if( strlen(json["language"].as<const char*>())==0 ) error=true;
 
-  if( float_not_equal(settings.coefficientx1, json["coefficientx1"].as<float>(), 0.000000000001) ||
-      float_not_equal(settings.coefficientx2, json["coefficientx2"].as<float>(), 0.000000000001) ||
-      float_not_equal(settings.coefficientx3, json["coefficientx3"].as<float>(), 0.000000000001) ||
-      float_not_equal(settings.constantterm, json["constantterm"].as<float>(), 0.000000000001) ||
+  if( float_not_equal(settings.coefficientx1, json["coefficientx1"].as<double>(), 0.000000000001) ||
+      float_not_equal(settings.coefficientx2, json["coefficientx2"].as<double>(), 0.000000000001) ||
+      float_not_equal(settings.coefficientx3, json["coefficientx3"].as<double>(), 0.000000000001) ||
+      float_not_equal(settings.constantterm, json["constantterm"].as<double>(), 0.000000000001) ||
       settings.itiltnum != json["itiltnum"].as<uint16_t>() ) {
-        settings.new_calibration=1;
+        settings.new_calibration=true;
         json["new_calibration"] = settings.new_calibration;
-      }
+  }
 
   File configFile = LittleFS.open("/config.json", "w");
   if (!configFile) {
@@ -249,10 +249,10 @@ void handleDeviceConfResults()
   strcpy(settings.cloud_host, json["cloud_host"]);
   strcpy(settings.cloud_username, json["cloud_username"]);
   strcpy(settings.cloud_password, json["cloud_password"]);
-  settings.coefficientx1 = json["coefficientx1"].as<float>();
-  settings.coefficientx2 = json["coefficientx2"].as<float>();
-  settings.coefficientx3 = json["coefficientx3"].as<float>();
-  settings.constantterm = json["constantterm"].as<float>();
+  settings.coefficientx1 = json["coefficientx1"].as<double>();
+  settings.coefficientx2 = json["coefficientx2"].as<double>();
+  settings.coefficientx3 = json["coefficientx3"].as<double>();
+  settings.constantterm = json["constantterm"].as<double>();
   settings.batconvfact = json["batconvfact"].as<float>();
   settings.pubint = json["pubint"].as<uint32_t>();
   settings.offlinepubint = json["offlinepubint"].as<uint32_t>();

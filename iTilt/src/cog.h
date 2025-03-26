@@ -10,12 +10,12 @@
 
 #pragma pack(1)
 struct SensorData {
-  uint32_t seconds; // as is
-  float tilt; // as is
-  int16_t temp; // -320.00 .. +320.00 (*100)
-  uint16_t batvolt; // 0..4.20 (*100)
-  //uint16_t gravity; // 0 .. 2.0000 (*10k)
-  uint8_t signal_strength; // 0..100
+  uint32_t seconds; // 4b as is
+  float tilt; // 4b as is
+  int16_t temp; // 2b -320.00 .. +320.00 (*100)
+  uint16_t batvolt; // 2b 0..4.20 (*100)
+  //uint16_t gravity; // 2b 0 .. 2.0000 (*10k)
+  uint8_t signal_strength; // 1b 0..100
 };
 #pragma pack()
 

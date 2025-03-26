@@ -623,6 +623,71 @@ void listFiles() {
   }
 }
 
+/**
+ * Преобразует JSON-поле (число или строку) в целочисленную переменную.
+ * Поддерживает: uint8_t, uint16_t, uint32_t, int, short и другие целочисленные типы.
+ * 
+ * @param target     Ссылка на переменную, в которую записываем значение.
+ * @param jsonValue  JSON-поле (JsonVariant).
+ * @return           true, если преобразование успешно, false при ошибке.
+ */
+template <typename T>
+bool jsonToSettingsInt(T &target, const JsonVariant &jsonValue) 
+{
+    // Если JSON-поле - целое число
+    if (jsonValue.is<int>()) {
+        int val = jsonValue.as<int>();
+        target = static_cast<T>(val);
+        return true;
+    }
+    
+    // Если JSON-поле - строка (например, "123")
+    if (jsonValue.is<const char*>()) {
+        target = atoi(jsonValue.as<const char*>());
+        return true;
+    }
+    
+    // Если тип не подходит (например, bool, float, массив)
+    return false;
+}
+
+bool jsonToSettingsBool(bool &target, const JsonVariant &jsonValue)
+{
+  if (jsonValue.is<bool>()) {
+    target = jsonValue.as<bool>();
+    return true;
+  } 
+  else if (jsonValue.is<const char*>()) { // "new_calibration":"true" / "new_calibration":"1"
+    String val = jsonValue.as<const char*>();
+    val.toLowerCase();
+    target = (val == "true" || val == "1");
+    return true;
+  }
+  return false;
+}
+
+template <typename T>
+bool jsonToSettingsFloating(T &target, const JsonVariant &jsonValue)
+{
+  if (jsonValue.is<float>()) {
+    target = jsonValue.as<float>();
+    return true;
+  } 
+  else if (jsonValue.is<double>()) {
+    target = jsonValue.as<double>();
+    return true;
+  } 
+  else if (jsonValue.is<const char*>()) { 
+    //target = atof(jsonValue.as<const char*>());
+    target = jsonValue.as<T>();
+    return true;
+  }
+  return false;
+}
+
+
+
+
 void readConfiguration() 
 {
   //read configuration from FS json
@@ -645,29 +710,56 @@ void readConfiguration()
         DynamicJsonDocument json(1024);
         auto deserializeError = deserializeJson(json, buf.get());
         if ( ! deserializeError ) {
-          //Serial.println("We've read:");
-          //serializeJson(json, Serial);
-          //Serial.println("");
+          Serial.println("We've read:");
+          serializeJson(json, Serial);
+          Serial.println("");
 
-          if (!json["portalTimeOut"].isNull() && strlen(json["portalTimeOut"].as<const char*>()) > 0) settings.portalTimeOut = json["portalTimeOut"].as<uint16_t>();
+          if (!json["portalTimeOut"].isNull()) jsonToSettingsInt(settings.portalTimeOut, json["portalTimeOut"]);
+          //if (!json["portalTimeOut"].isNull() && strlen(json["portalTimeOut"].as<const char*>()) > 0) settings.portalTimeOut = json["portalTimeOut"].as<uint16_t>();
           strcpy(settings.cloud_host, json["cloud_host"]);
           strcpy(settings.cloud_username, json["cloud_username"]);
           strcpy(settings.cloud_password, json["cloud_password"]);
-          if (!json["coefficientx3"].isNull() && strlen(json["coefficientx3"].as<const char*>()) > 0) settings.coefficientx3 = json["coefficientx3"].as<float>();
-          if (!json["coefficientx2"].isNull() && strlen(json["coefficientx2"].as<const char*>()) > 0) settings.coefficientx2 = json["coefficientx2"].as<float>();
-          if (!json["coefficientx1"].isNull() && strlen(json["coefficientx1"].as<const char*>()) > 0) settings.coefficientx1 = json["coefficientx1"].as<float>();
-          if (!json["constantterm"].isNull() && strlen(json["constantterm"].as<const char*>()) > 0) settings.constantterm = json["constantterm"].as<float>();
-          if (!json["batconvfact"].isNull() && strlen(json["batconvfact"].as<const char*>()) > 0) settings.batconvfact = json["batconvfact"].as<float>();
-          if (!json["pubint"].isNull() && strlen(json["pubint"].as<const char*>()) > 0) settings.pubint = json["pubint"].as<uint32_t>();
+          if (!json["coefficientx3"].isNull()) jsonToSettingsFloating(settings.coefficientx3, json["coefficientx3"]);
+          if (!json["coefficientx2"].isNull()) jsonToSettingsFloating(settings.coefficientx2, json["coefficientx2"]);
+          if (!json["coefficientx1"].isNull()) jsonToSettingsFloating(settings.coefficientx1, json["coefficientx1"]);
+          if (!json["constantterm"].isNull()) jsonToSettingsFloating(settings.constantterm, json["constantterm"]);
+          if (!json["batconvfact"].isNull()) jsonToSettingsFloating(settings.batconvfact, json["batconvfact"]);
+          //if (!json["coefficientx3"].isNull() && strlen(json["coefficientx3"].as<const char*>()) > 0) settings.coefficientx3 = json["coefficientx3"].as<float>();
+          //if (!json["coefficientx2"].isNull() && strlen(json["coefficientx2"].as<const char*>()) > 0) settings.coefficientx2 = json["coefficientx2"].as<float>();
+          //if (!json["coefficientx1"].isNull() && strlen(json["coefficientx1"].as<const char*>()) > 0) settings.coefficientx1 = json["coefficientx1"].as<float>();
+          //if (!json["constantterm"].isNull() && strlen(json["constantterm"].as<const char*>()) > 0) settings.constantterm = json["constantterm"].as<float>();
+          //if (!json["batconvfact"].isNull() && strlen(json["batconvfact"].as<const char*>()) > 0) settings.batconvfact = json["batconvfact"].as<float>();
+          if (!json["pubint"].isNull()) jsonToSettingsInt(settings.pubint, json["pubint"]);
+          if (!json["offlinepubint"].isNull()) jsonToSettingsInt(settings.offlinepubint, json["offlinepubint"]);
+          if (!json["originalgravity"].isNull()) jsonToSettingsFloating(settings.originalgravity, json["originalgravity"]);
+          if (!json["tiltOffset"].isNull()) jsonToSettingsFloating(settings.tiltOffset, json["tiltOffset"]);
+          if (!json["itiltnum"].isNull()) jsonToSettingsInt(settings.itiltnum, json["itiltnum"]);
+          if (!json["language"].isNull()) jsonToSettingsInt(settings.language, json["language"]);
+
+          /*if (!json["pubint"].isNull() && strlen(json["pubint"].as<const char*>()) > 0) settings.pubint = json["pubint"].as<uint32_t>();
           if (!json["offlinepubint"].isNull() && strlen(json["offlinepubint"].as<const char*>()) > 0) settings.offlinepubint = json["offlinepubint"].as<uint32_t>();
           if (!json["originalgravity"].isNull() && strlen(json["originalgravity"].as<const char*>()) > 0) settings.originalgravity = json["originalgravity"].as<float>();
           if (!json["tiltOffset"].isNull() && strlen(json["tiltOffset"].as<const char*>()) > 0) settings.tiltOffset = json["tiltOffset"].as<float>();
           if (!json["itiltnum"].isNull() && strlen(json["itiltnum"].as<const char*>()) > 0) settings.itiltnum = json["itiltnum"].as<uint16_t>();
-          if (!json["language"].isNull() && strlen(json["language"].as<const char*>()) > 0) settings.language = json["language"].as<uint8_t>();
-          if (!json["new_calibration"].isNull() && strlen(json["new_calibration"].as<const char*>()) > 0) settings.new_calibration = json["new_calibration"].as<bool>();
+          if (!json["language"].isNull() && strlen(json["language"].as<const char*>()) > 0) settings.language = json["language"].as<uint8_t>();*/
+          /*if (json.containsKey("language")) {
+            if (json["language"].is<uint8_t>()) {
+                settings.language = json["language"].as<uint8_t>();
+            } 
+            else if (json["language"].is<const char*>()) {
+                settings.language = atoi(json["language"].as<const char*>()); // "1" → 1
+            }
+          }*/
+ 
+          if (!json["new_calibration"].isNull()) jsonToSettingsBool(settings.new_calibration, json["new_calibration"]);
           
           if( settings.pubint==0 ) settings.pubint=10;
           if( settings.offlinepubint < settings.pubint ) settings.offlinepubint=settings.pubint;
+
+          Serial.println("We've set:");
+          //settings.new_calibration=true;
+          Serial.println( settings.new_calibration );
+
         } else {
           Serial.println("failed to load json config");
         }
@@ -677,8 +769,6 @@ void readConfiguration()
     else{
       Serial.println("no config file config.json");
     }
-
-    //add wifi.json reading.
 
     if (LittleFS.exists("/pinconfig.json")) {
       //file exists, reading and loading
@@ -692,7 +782,7 @@ void readConfiguration()
 
         pinConfigFile.readBytes(buf.get(), size);
 
-        DynamicJsonDocument json(1024*2);
+        DynamicJsonDocument json(1024*2); // ?? много же
         auto deserializeError = deserializeJson(json, buf.get());
         serializeJson(json, Serial);
         if ( ! deserializeError ) {
@@ -736,22 +826,22 @@ void saveConfiguration(void)
   DynamicJsonDocument doc(1024); // Размер можно увеличить, если структура большая
 
   // Заполняем JSON значениями из структуры
-  doc["itiltnum"] = settings.itiltnum;
-  doc["coefficientx3"] = settings.coefficientx3;
-  doc["coefficientx2"] = settings.coefficientx2;
-  doc["coefficientx1"] = settings.coefficientx1;
-  doc["constantterm"] = settings.constantterm;
-  doc["tiltOffset"] = settings.tiltOffset;
-  doc["batconvfact"] = settings.batconvfact;
-  doc["originalgravity"] = settings.originalgravity;
-  doc["pubint"] = settings.pubint;
-  doc["offlinepubint"] = settings.offlinepubint;
-  doc["portalTimeOut"] = settings.portalTimeOut;
+  doc["itiltnum"] = static_cast<uint16_t>(settings.itiltnum);
+  doc["coefficientx3"] = static_cast<double>(settings.coefficientx3);
+  doc["coefficientx2"] = static_cast<double>(settings.coefficientx2);
+  doc["coefficientx1"] = static_cast<double>(settings.coefficientx1);
+  doc["constantterm"] = static_cast<double>(settings.constantterm);
+  doc["tiltOffset"] = static_cast<float>(settings.tiltOffset);
+  doc["batconvfact"] = static_cast<float>(settings.batconvfact);
+  doc["originalgravity"] = static_cast<float>(settings.originalgravity);
+  doc["pubint"] = static_cast<uint32_t>(settings.pubint);
+  doc["offlinepubint"] = static_cast<uint32_t>(settings.offlinepubint);
+  doc["portalTimeOut"] = static_cast<uint16_t>(settings.portalTimeOut);
   doc["cloud_host"] = settings.cloud_host;
   doc["cloud_username"] = settings.cloud_username;
   doc["cloud_password"] = settings.cloud_password;
-  doc["language"] = settings.language;
-  doc["new_calibration"] = settings.new_calibration;
+  doc["language"] = static_cast<uint8_t>(settings.language);
+  doc["new_calibration"] = static_cast<bool>(settings.new_calibration);
 
   // Сериализуем JSON в файл
   if (serializeJson(doc, configFile) == 0) {
@@ -765,7 +855,7 @@ void saveConfiguration(void)
 
 void saveCalibrationUpdated(void)
 {
-  settings.new_calibration = 0;
+  settings.new_calibration = false;
   saveConfiguration();
 }
 
